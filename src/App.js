@@ -3,15 +3,22 @@ import './App.css';
 
 function App() {
   // State für Eingabefelder
-  const [materialsCost, setMaterialsCost] = useState('');
-  const [laborCost, setLaborCost] = useState('');
-  const [overhead, setOverhead] = useState('');
-  const [sellingPrice, setSellingPrice] = useState('');
-  const [profit, setProfit] = useState(0);
+  const [materialsCost, setMaterialsCost] = useState(''); // Verbrauchsmaterial/Werkzeug
+  const [workTime, setWorkTime] = useState(''); // Arbeitszeit in Minuten
+  const [shippingCost, setShippingCost] = useState(''); // Versandkosten
+  const [testTime, setTestTime] = useState(''); // Testfliegen/Tuning in Minuten
+  const [sellingPrice, setSellingPrice] = useState(''); // Verkaufspreis
+  const [profit, setProfit] = useState(0); // Berechneter Gewinn
+
+  // Konstanten für Stundensätze
+  const HOURLY_RATE = 30; // CHF pro Stunde
 
   // Berechnung der Rentabilität
   const calculateProfit = () => {
-    const totalCost = parseFloat(materialsCost) + parseFloat(laborCost) + parseFloat(overhead);
+    const workCost = (parseFloat(workTime) / 60) * HOURLY_RATE; // Arbeitskosten
+    const testCost = (parseFloat(testTime) / 60) * HOURLY_RATE; // Kosten für Testfliegen/Tuning
+    const totalCost =
+      parseFloat(materialsCost) + workCost + parseFloat(shippingCost) + testCost;
     const calculatedProfit = parseFloat(sellingPrice) - totalCost;
     setProfit(calculatedProfit);
   };
@@ -21,7 +28,7 @@ function App() {
       <h1>Drone Profitability Calculator</h1>
       <div className="calculator">
         <label>
-          Materialkosten:
+          Verbrauchsmaterial/Werkzeug (CHF):
           <input
             type="number"
             value={materialsCost}
@@ -29,23 +36,31 @@ function App() {
           />
         </label>
         <label>
-          Arbeitskosten:
+          Arbeitszeit (Minuten):
           <input
             type="number"
-            value={laborCost}
-            onChange={(e) => setLaborCost(e.target.value)}
+            value={workTime}
+            onChange={(e) => setWorkTime(e.target.value)}
           />
         </label>
         <label>
-          Gemeinkosten (Overhead):
+          Versandkosten (CHF):
           <input
             type="number"
-            value={overhead}
-            onChange={(e) => setOverhead(e.target.value)}
+            value={shippingCost}
+            onChange={(e) => setShippingCost(e.target.value)}
           />
         </label>
         <label>
-          Verkaufspreis:
+          Testfliegen/Tuning (Minuten):
+          <input
+            type="number"
+            value={testTime}
+            onChange={(e) => setTestTime(e.target.value)}
+          />
+        </label>
+        <label>
+          Verkaufspreis (CHF):
           <input
             type="number"
             value={sellingPrice}
@@ -53,10 +68,4 @@ function App() {
           />
         </label>
         <button onClick={calculateProfit}>Profit berechnen</button>
-        <h2>Gewinn: {profit >= 0 ? `€${profit}` : `Verlust von €${-profit}`}</h2>
-      </div>
-    </div>
-  );
-}
-
-export default App;
+        <h
